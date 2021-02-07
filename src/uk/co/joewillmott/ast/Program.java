@@ -6,34 +6,23 @@ import uk.co.joewillmott.exceptions.UndefinedVariableException;
 import uk.co.joewillmott.interpreter.CallStack;
 import uk.co.joewillmott.semanticanalyser.ScopedSymbolTable;
 
-import java.util.ArrayList;
+public class Program extends AST {
+    private Block block;
 
-public class Block extends AST {
-    private ArrayList<AST> statements;
-
-    public Block() {
+    public Program(Block block) {
         super(null, null, null);
-
-        this.statements = new ArrayList<>();
-    }
-
-    public void addStatement(AST statement) {
-        this.statements.add(statement);
+        this.block = block;
     }
 
     @Override
     public Object evaluate(CallStack callStack) throws UndefinedVariableException, InvalidTypeException {
-        for (AST statement : this.statements) {
-            statement.evaluate(callStack);
-        }
+        this.block.evaluate(callStack);
 
         return null;
     }
 
     @Override
     public void visit(ScopedSymbolTable symbolTable) throws UndefinedVariableException, InvalidTypeException, UndefinedFunctionException {
-        for (AST statement : statements) {
-            statement.visit(symbolTable);
-        }
+        this.block.visit(symbolTable);
     }
 }

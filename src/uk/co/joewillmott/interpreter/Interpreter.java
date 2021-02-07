@@ -1,24 +1,28 @@
 package uk.co.joewillmott.interpreter;
 
-import uk.co.joewillmott.ast.AST;
-import uk.co.joewillmott.exceptions.InvalidTypeException;
-import uk.co.joewillmott.exceptions.UndefinedVariableException;
+import uk.co.joewillmott.ast.Program;
+import uk.co.joewillmott.exceptions.*;
+import uk.co.joewillmott.lexer.Lexer;
+import uk.co.joewillmott.parser.Parser;
+import uk.co.joewillmott.semanticanalyser.SemanticAnalyser;
 
 public class Interpreter {
-    private AST tree;
+    private String program;
     private CallStack callStack;
 
-    public Interpreter(AST tree) {
-        this.tree = tree;
-
+    public Interpreter(String program) {
+        this.program = program;
         this.callStack = new CallStack();
     }
 
-    public Object visit(AST tree) throws UndefinedVariableException, InvalidTypeException {
-        if (tree == null) {
-            return null;
-        }
+    public void evaluate() throws UnableToPeekException, InvalidSyntaxException, UndefinedVariableException, UndefinedFunctionException, InvalidTypeException {
+        Lexer lexer = new Lexer(this.program);
+        Parser parser = new Parser(lexer);
+        Program program = parser.parse();
 
-        return tree.evaluate(callStack);
+        SemanticAnalyser semanticAnalyser = new SemanticAnalyser();
+        semanticAnalyser.evaluate(program);
+
+        program.evaluate(this.callStack);
     }
 }

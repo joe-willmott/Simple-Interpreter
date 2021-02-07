@@ -27,6 +27,7 @@ public class Lexer {
         put('{', new Token(TokenType.LBRACE, "{"));
         put('}', new Token(TokenType.RBRACE, "}"));
         put(';', new Token(TokenType.SEMI, ";"));
+        put('"', new Token(TokenType.DBL_QUOTE, "\""));
     }};
 
     private String text;

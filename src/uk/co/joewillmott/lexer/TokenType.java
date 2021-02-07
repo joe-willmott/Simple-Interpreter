@@ -28,7 +28,8 @@ public enum TokenType {
     ASSIGN("="),
     COMMA(","),
     FUN("FUN"),
-    SEMI(";");
+    SEMI(";"),
+    DBL_QUOTE("");
 
     public final String label;
 

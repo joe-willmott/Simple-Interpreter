@@ -42,7 +42,7 @@ public class ScopedSymbolTable extends HashMap<String, Symbol> {
             return symbol;
         }
 
-        if (currentScopeOnly || this.enclosingScope == null || this.functionScope) {
+        if (currentScopeOnly || this.enclosingScope == null || this.enclosingScope.isFunctionScope()) {
             if (this.globalScope == this || this.globalScope == null) {
                 return null;
             }

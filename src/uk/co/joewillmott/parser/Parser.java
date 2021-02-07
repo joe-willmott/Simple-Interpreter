@@ -6,7 +6,6 @@ import uk.co.joewillmott.exceptions.UnableToPeekException;
 import uk.co.joewillmott.lexer.Lexer;
 import uk.co.joewillmott.lexer.Token;
 import uk.co.joewillmott.lexer.TokenType;
-import uk.co.joewillmott.ast.Block;
 
 import java.util.ArrayList;
 
@@ -17,10 +16,6 @@ public class Parser {
     public Parser(Lexer lexer) throws UnableToPeekException {
         this.lexer = lexer;
         this.currentToken = lexer.getNextToken();
-    }
-
-    private void error() throws InvalidSyntaxException {
-        throw new InvalidSyntaxException(String.format("UnexpectedToken: %s", this.currentToken));
     }
 
     private void chomp(TokenType tokenType) throws UnableToPeekException, InvalidSyntaxException {
@@ -126,9 +121,9 @@ public class Parser {
 
         this.chomp(TokenType.LPAREN);
         if (this.currentToken.getType() == TokenType.ID) {
-            this.chomp(TokenType.ID);
-
             parameters.add(new Variable(this.currentToken));
+
+            this.chomp(TokenType.ID);
 
             while (this.currentToken.getType() == TokenType.COMMA) {
                 this.chomp(TokenType.COMMA);
@@ -142,7 +137,7 @@ public class Parser {
         Block block = this.block();
         this.chomp(TokenType.RBRACE);
 
-        return new FunctionDefinition(functionName, parameters, block);
+        return new FunctionDefinition(functionName, parameters, block, false);
     }
 
     private AST assignmentStatement() throws UnableToPeekException, InvalidSyntaxException {
@@ -212,7 +207,9 @@ public class Parser {
         return block;
     }
 
-    public Block parse() throws InvalidSyntaxException, UnableToPeekException {
-        return this.block();
+    public Program parse() throws InvalidSyntaxException, UnableToPeekException {
+        Block block = this.block();
+
+        return new Program(block);
     }
 }

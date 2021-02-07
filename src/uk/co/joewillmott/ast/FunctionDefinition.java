@@ -4,9 +4,8 @@ import uk.co.joewillmott.exceptions.InvalidTypeException;
 import uk.co.joewillmott.exceptions.UndefinedFunctionException;
 import uk.co.joewillmott.exceptions.UndefinedVariableException;
 import uk.co.joewillmott.interpreter.CallStack;
-import uk.co.joewillmott.semanticanalyser.symbol.FunctionSymbol;
 import uk.co.joewillmott.semanticanalyser.ScopedSymbolTable;
-import uk.co.joewillmott.semanticanalyser.symbol.Symbol;
+import uk.co.joewillmott.semanticanalyser.symbol.FunctionSymbol;
 import uk.co.joewillmott.semanticanalyser.symbol.VariableSymbol;
 
 import java.util.ArrayList;
@@ -15,12 +14,14 @@ public class FunctionDefinition extends AST {
     private String name;
     private ArrayList<AST> parameters;
     private Block block;
+    private boolean predefined;
 
-    public FunctionDefinition(String name, ArrayList<AST> parameters, Block block) {
+    public FunctionDefinition(String name, ArrayList<AST> parameters, Block block, boolean predefined) {
         super(null, null, null);
         this.name = name;
         this.parameters = parameters;
         this.block = block;
+        this.predefined = predefined;
     }
 
     public String getName() {
@@ -39,6 +40,10 @@ public class FunctionDefinition extends AST {
         return block;
     }
 
+    public boolean isPredefined() {
+        return predefined;
+    }
+
     @Override
     public Object evaluate(CallStack callStack) {
         return null;
@@ -46,7 +51,7 @@ public class FunctionDefinition extends AST {
 
     @Override
     public void visit(ScopedSymbolTable symbolTable) throws UndefinedVariableException, InvalidTypeException, UndefinedFunctionException {
-        Symbol functionSymbol = new FunctionSymbol(this.name, this.block);
+        FunctionSymbol functionSymbol = new FunctionSymbol(this.name, this.block);
 
         symbolTable.insert(functionSymbol);
 
@@ -54,11 +59,11 @@ public class FunctionDefinition extends AST {
 
         for (AST parameter : this.parameters) {
             String parameterName = parameter.getValue();
-            Symbol parameterSymbol = new VariableSymbol(parameterName);
+            VariableSymbol parameterSymbol = new VariableSymbol(parameterName);
 
             functionScope.put(parameterName, parameterSymbol);
 
-            functionScope.put(parameterName, parameterSymbol);
+            functionSymbol.addParameter(parameterSymbol);
         }
 
         this.block.visit(functionScope);
