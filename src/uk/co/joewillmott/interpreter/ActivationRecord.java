@@ -13,6 +13,10 @@ public class ActivationRecord extends HashMap<String, Object> {
         this.nesting_level = nesting_level;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public ARType getType() {
         return type;
     }

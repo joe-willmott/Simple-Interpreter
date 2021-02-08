@@ -1,8 +1,3 @@
-fun test(x, y, z) {
-    y = 2;
-    x = floor(x);
-    println(x);
-};
-
-x = 15;
-test(x);
+x = "this is some dumb text";
+println(x);
+error("TEST");

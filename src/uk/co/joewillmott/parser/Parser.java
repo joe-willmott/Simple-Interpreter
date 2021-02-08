@@ -29,7 +29,7 @@ public class Parser {
     private AST term() throws UnableToPeekException, InvalidSyntaxException {
         AST node = this.factor();
 
-        while (this.currentToken.getType() == TokenType.MUL || this.currentToken.getType() == TokenType.DIV || this.currentToken.getType() == TokenType.INT_DIV || this.currentToken.getType() == TokenType.AND || this.currentToken.getType() == TokenType.OR) {
+        while (this.currentToken.getType() == TokenType.MUL || this.currentToken.getType() == TokenType.DIV || this.currentToken.getType() == TokenType.INT_DIV || this.currentToken.getType() == TokenType.AND || this.currentToken.getType() == TokenType.OR || this.currentToken.getType() == TokenType.CONCAT) {
             Token token = this.currentToken;
             this.chomp(token.getType());
 
@@ -52,10 +52,13 @@ public class Parser {
                 return new UnaryOperation(token, this.factor());
             case INT:
                 this.chomp(TokenType.INT);
-                return new NumberNode(token);
+                return new NumberConstant(token);
+            case STRING:
+                this.chomp(TokenType.STRING);
+                return new StringConstant(token);
             case FLOAT:
                 this.chomp(TokenType.FLOAT);
-                return new NumberNode(token);
+                return new NumberConstant(token);
             case LPAREN:
                 this.chomp(TokenType.LPAREN);
                 AST node = this.comparisonExpression();
@@ -106,13 +109,13 @@ public class Parser {
         return this.variable();
     }
 
-    private AST variable() throws InvalidSyntaxException, UnableToPeekException {
+    private Variable variable() throws InvalidSyntaxException, UnableToPeekException {
         Variable node = new Variable(this.currentToken);
         this.chomp(TokenType.ID);
         return node;
     }
 
-    private AST functionDefinition() throws UnableToPeekException, InvalidSyntaxException {
+    private FunctionDefinition functionDefinition() throws UnableToPeekException, InvalidSyntaxException {
         this.chomp(TokenType.FUN);
         String functionName = this.currentToken.getValue();
         this.chomp(TokenType.ID);
@@ -140,13 +143,13 @@ public class Parser {
         return new FunctionDefinition(functionName, parameters, block, false);
     }
 
-    private AST assignmentStatement() throws UnableToPeekException, InvalidSyntaxException {
+    private Assignment assignmentStatement() throws UnableToPeekException, InvalidSyntaxException {
         AST left = this.variable();
         this.chomp(TokenType.ASSIGN);
         return new Assignment(left, this.currentToken, this.comparisonExpression());
     }
 
-    private AST functionCall() throws InvalidSyntaxException, UnableToPeekException {
+    private FunctionCall functionCall() throws InvalidSyntaxException, UnableToPeekException {
         Token token = this.currentToken;
         String functionName = token.getValue();
         this.chomp(TokenType.ID);
@@ -172,6 +175,45 @@ public class Parser {
         return new FunctionCall(functionName, parameters);
     }
 
+    private ConditionalStatement conditionalStatement() throws UnableToPeekException, InvalidSyntaxException {
+        this.chomp(TokenType.IF);
+        this.chomp(TokenType.LPAREN);
+        AST condition = this.comparisonExpression();
+        this.chomp(TokenType.RPAREN);
+        this.chomp(TokenType.LBRACE);
+        Block left = this.block();
+        this.chomp(TokenType.RBRACE);
+
+        Block right = new Block();
+        if (this.currentToken.getType() == TokenType.ELSE) {
+            this.chomp(TokenType.ELSE);
+            this.chomp(TokenType.LBRACE);
+            right = this.block();
+            this.chomp(TokenType.RBRACE);
+        }
+
+        return new ConditionalStatement(left, condition, right);
+    }
+
+    private WhileLoop whileLoop() throws UnableToPeekException, InvalidSyntaxException {
+        this.chomp(TokenType.WHILE);
+        this.chomp(TokenType.LPAREN);
+        AST condition = this.comparisonExpression();
+        this.chomp(TokenType.RPAREN);
+        this.chomp(TokenType.LBRACE);
+        Block left = this.block();
+        this.chomp(TokenType.RBRACE);
+
+        return new WhileLoop(left, condition);
+    }
+
+    private ReturnStatement returnStatement() throws UnableToPeekException, InvalidSyntaxException {
+        this.chomp(TokenType.RETURN);
+        AST statement = this.comparisonExpression();
+
+        return new ReturnStatement(statement);
+    }
+
     private AST statement() throws UnableToPeekException, InvalidSyntaxException {
         TokenType tokenType = this.currentToken.getType();
 
@@ -180,6 +222,12 @@ public class Parser {
         }
 
         switch (tokenType) {
+            case IF:
+                return this.conditionalStatement();
+            case WHILE:
+                return this.whileLoop();
+            case RETURN:
+                return this.returnStatement();
             case ID:
                 return this.assignmentStatement();
             case FUN:

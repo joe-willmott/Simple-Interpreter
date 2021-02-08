@@ -10,6 +10,7 @@ public enum TokenType {
     BOOL("BOOL"),
     INT("INT"),
     FLOAT("FLOAT"),
+    STRING("STRING"),
 
     GREATER_THAN("GREATER_THAN"),
     LESS_THAN("LESS_THAN"),
@@ -29,7 +30,12 @@ public enum TokenType {
     COMMA(","),
     FUN("FUN"),
     SEMI(";"),
-    DBL_QUOTE("");
+    IF("IF"),
+    ELSE("ELSE"),
+    WHILE("WHILE"),
+    RETURN("RETURN"),
+    CONCAT("CONCAT"),
+    DBL_QUOTE("\"");
 
     public final String label;
 

@@ -48,15 +48,17 @@ public class FunctionCall extends AST {
 
         callStack.push(activationRecord);
 
+        Object returnValue;
+
         if (this.symbol.getCustomFunction() != null) {
-            this.symbol.getCustomFunction().run(arguments, callStack);
+            returnValue = this.symbol.getCustomFunction().run(arguments, callStack);
         } else {
-            this.symbol.getBlock().evaluate(callStack);
+            returnValue = this.symbol.getBlock().evaluate(callStack);
         }
 
         callStack.pop();
 
-        return null;
+        return returnValue;
     }
 
     @Override

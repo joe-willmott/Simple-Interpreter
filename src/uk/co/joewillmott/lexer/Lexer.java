@@ -1,7 +1,6 @@
 package uk.co.joewillmott.lexer;
 
 import uk.co.joewillmott.exceptions.UnableToPeekException;
-import uk.co.joewillmott.exceptions.UnknownCharacterException;
 
 import java.util.HashMap;
 
@@ -10,6 +9,10 @@ public class Lexer {
         put("true", new Token(TokenType.BOOL, "true"));
         put("false", new Token(TokenType.BOOL, "false"));
         put("fun", new Token(TokenType.FUN, "fun"));
+        put("if", new Token(TokenType.IF, "if"));
+        put("else", new Token(TokenType.ELSE, "else"));
+        put("while", new Token(TokenType.WHILE, "while"));
+        put("return", new Token(TokenType.RETURN, "return"));
     }};
 
     private final HashMap<Character, Token> CHARACTERS = new HashMap<>() {{
@@ -27,7 +30,7 @@ public class Lexer {
         put('{', new Token(TokenType.LBRACE, "{"));
         put('}', new Token(TokenType.RBRACE, "}"));
         put(';', new Token(TokenType.SEMI, ";"));
-        put('"', new Token(TokenType.DBL_QUOTE, "\""));
+        put('\"', new Token(TokenType.DBL_QUOTE, "\""));
     }};
 
     private String text;
@@ -39,10 +42,6 @@ public class Lexer {
         this.text = text;
         this.pos = 0;
         this.currentChar = this.text.charAt(this.pos);
-    }
-
-    private void error() throws UnknownCharacterException {
-        throw new UnknownCharacterException();
     }
 
     private void skipWhitespace() {
@@ -107,8 +106,29 @@ public class Lexer {
         return token;
     }
 
+    private Token string() {
+        StringBuilder returnValue = new StringBuilder();
+
+        this.advance();
+        while (!this.finished && this.currentChar != '\"') {
+            if (this.currentChar == '\\') {
+                this.advance();
+            }
+            returnValue.append(this.currentChar);
+            this.advance();
+        }
+
+        this.advance();
+
+        return new Token(TokenType.STRING, returnValue.toString());
+    }
+
     public Token getNextToken() throws UnableToPeekException {
         while (!this.finished) {
+            if (this.currentChar == '\"') {
+                return this.string();
+            }
+
             if (Character.isWhitespace(this.currentChar)) {
                 this.skipWhitespace();
                 continue;
@@ -126,6 +146,12 @@ public class Lexer {
                 this.advance();
                 this.advance();
                 return new Token(TokenType.INT_DIV, "//");
+            }
+
+            if (this.currentChar == '.' && this.peek() == '.') {
+                this.advance();
+                this.advance();
+                return new Token(TokenType.CONCAT, "..");
             }
 
             if (this.currentChar == '&' && this.peek() == '&') {

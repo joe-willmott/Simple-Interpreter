@@ -7,19 +7,17 @@ import uk.co.joewillmott.semanticanalyser.symbol.VariableSymbol;
 
 import java.util.ArrayList;
 
-public class Print extends InbuiltFunction {
-    public Print() {
-        super("print");
+public class ErrorFunction extends InbuiltFunction {
+    public ErrorFunction() {
+        super("error");
 
         this.addParameter(new VariableSymbol("a"));
-        this.setCustomFunction(Print::run);
+        this.setCustomFunction(ErrorFunction::run);
     }
 
     public static Object run(ArrayList<AST> arguments, CallStack callStack) throws UndefinedVariableException {
         Object argumentValue = callStack.findVar("a");
 
-        System.out.print(argumentValue);
-
-        return null;
+        throw new RuntimeException(argumentValue.toString());
     }
 }

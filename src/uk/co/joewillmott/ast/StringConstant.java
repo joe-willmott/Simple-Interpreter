@@ -4,14 +4,14 @@ import uk.co.joewillmott.interpreter.CallStack;
 import uk.co.joewillmott.lexer.Token;
 import uk.co.joewillmott.semanticanalyser.ScopedSymbolTable;
 
-public class NumberNode extends AST {
-    public NumberNode(Token token) {
+public class StringConstant extends AST {
+    public StringConstant(Token token) {
         super(null, token, null);
     }
 
     @Override
-    public Float evaluate(CallStack callStack) {
-        return Float.valueOf(this.getToken().getValue());
+    public String evaluate(CallStack callStack) {
+        return this.getToken().getValue();
     }
 
     @Override

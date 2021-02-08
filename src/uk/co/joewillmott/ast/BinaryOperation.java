@@ -33,6 +33,8 @@ public class BinaryOperation extends AST {
                 return (float) this.getLeft().evaluate(callStack) > (float) this.getRight().evaluate(callStack);
             case LESS_THAN:
                 return (float) this.getLeft().evaluate(callStack) < (float) this.getRight().evaluate(callStack);
+            case CONCAT:
+                return String.format("%s%s", this.getLeft().evaluate(callStack), this.getRight().evaluate(callStack));
         }
 
         return null;

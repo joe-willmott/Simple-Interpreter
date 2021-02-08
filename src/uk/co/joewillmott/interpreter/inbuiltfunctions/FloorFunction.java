@@ -7,12 +7,12 @@ import uk.co.joewillmott.semanticanalyser.symbol.VariableSymbol;
 
 import java.util.ArrayList;
 
-public class Floor extends InbuiltFunction {
-    public Floor() {
+public class FloorFunction extends InbuiltFunction {
+    public FloorFunction() {
         super("floor");
 
         this.addParameter(new VariableSymbol("a"));
-        this.setCustomFunction(Floor::run);
+        this.setCustomFunction(FloorFunction::run);
     }
 
     public static int run(ArrayList<AST> arguments, CallStack callStack) throws UndefinedVariableException {
