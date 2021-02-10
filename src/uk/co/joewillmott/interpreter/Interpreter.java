@@ -23,6 +23,7 @@ public class Interpreter {
         put("tofloat", new ToFloatFunction());
         put("tostring", new ToStringFunction());
         put("tobool", new ToBoolFunction());
+        put("type", new TypeFunction());
         put("input", new InputFunction());
     }};
 
@@ -31,7 +32,7 @@ public class Interpreter {
         this.callStack = new CallStack();
     }
 
-    public void evaluate() throws UnableToPeekException, InvalidSyntaxException, UndefinedVariableException, UndefinedFunctionException, InvalidTypeException {
+    public void evaluate() throws UnableToPeekException, InvalidSyntaxException, UndefinedVariableException, UndefinedFunctionException, InvalidTypeException, InvalidFunctionCall {
         Lexer lexer = new Lexer(this.program);
         Parser parser = new Parser(lexer);
         Program program = parser.parse();

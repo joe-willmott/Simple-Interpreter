@@ -1,5 +1,6 @@
 package uk.co.joewillmott.ast;
 
+import uk.co.joewillmott.exceptions.InvalidFunctionCall;
 import uk.co.joewillmott.exceptions.InvalidTypeException;
 import uk.co.joewillmott.exceptions.UndefinedFunctionException;
 import uk.co.joewillmott.exceptions.UndefinedVariableException;
@@ -7,7 +8,6 @@ import uk.co.joewillmott.interpreter.CallStack;
 import uk.co.joewillmott.lexer.Token;
 import uk.co.joewillmott.semanticanalyser.ScopedSymbolTable;
 
-@SuppressWarnings("RedundantCast")
 public class BinaryOperation extends AST {
     public BinaryOperation(AST left, Token token, AST right) {
         super(left, token, right);
@@ -17,12 +17,10 @@ public class BinaryOperation extends AST {
         throw new InvalidTypeException(String.format("Invalid types %s and %s for operation %s.", a.getClass().getName(), b.getClass().getName(), this.getToken().getValue()));
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean isBoolean(Object a) {
         return a instanceof Boolean;
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean isNumber(Object a) {
         return a instanceof Float || a instanceof Integer;
     }
@@ -43,7 +41,6 @@ public class BinaryOperation extends AST {
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
     private Number add(Object a, Object b) throws InvalidTypeException {
         checkNumbers(a, b);
 
@@ -54,25 +51,23 @@ public class BinaryOperation extends AST {
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
     public Number sub(Object a, Object b) throws InvalidTypeException {
         checkNumbers(a, b);
 
         if (a instanceof Float || b instanceof Float) {
-            return (Float) a - (Float) b;
+            return Float.parseFloat(a.toString()) - Float.parseFloat(b.toString());
         } else {
-            return (Integer) a - (Integer) b;
+            return Integer.parseInt(a.toString()) - Integer.parseInt(b.toString());
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
     public Number mul(Object a, Object b) throws InvalidTypeException {
         checkNumbers(a, b);
 
         if (a instanceof Float || b instanceof Float) {
-            return (Float) a * (Float) b;
+            return Float.parseFloat(a.toString()) * Float.parseFloat(b.toString());
         } else {
-            return (Integer) a * (Integer) b;
+            return Integer.parseInt(a.toString()) * Integer.parseInt(b.toString());
         }
     }
 
@@ -124,7 +119,7 @@ public class BinaryOperation extends AST {
     }
 
     @Override
-    public Object evaluate(CallStack callStack) throws UndefinedVariableException, InvalidTypeException {
+    public Object evaluate(CallStack callStack) throws UndefinedVariableException, InvalidTypeException, InvalidFunctionCall {
         Object a = this.getLeft().evaluate(callStack);
         Object b = this.getRight().evaluate(callStack);
 

@@ -1,5 +1,6 @@
 package uk.co.joewillmott.ast;
 
+import uk.co.joewillmott.exceptions.InvalidFunctionCall;
 import uk.co.joewillmott.exceptions.InvalidTypeException;
 import uk.co.joewillmott.exceptions.UndefinedFunctionException;
 import uk.co.joewillmott.exceptions.UndefinedVariableException;
@@ -12,7 +13,7 @@ public class ReturnStatement extends AST {
     }
 
     @Override
-    public Object evaluate(CallStack callStack) throws UndefinedVariableException, InvalidTypeException {
+    public Object evaluate(CallStack callStack) throws UndefinedVariableException, InvalidTypeException, InvalidFunctionCall {
         return this.getLeft().evaluate(callStack);
     }
 

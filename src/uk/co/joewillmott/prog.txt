@@ -13,4 +13,5 @@ fun factorial(x) {
 input = input("> ");
 int = toint(input);
 result = factorial(int);
+
 println("The result of " .. int .. "! is " .. result .. ".");

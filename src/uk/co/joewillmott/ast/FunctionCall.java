@@ -1,5 +1,6 @@
 package uk.co.joewillmott.ast;
 
+import uk.co.joewillmott.exceptions.InvalidFunctionCall;
 import uk.co.joewillmott.exceptions.InvalidTypeException;
 import uk.co.joewillmott.exceptions.UndefinedFunctionException;
 import uk.co.joewillmott.exceptions.UndefinedVariableException;
@@ -37,12 +38,16 @@ public class FunctionCall extends AST {
     }
 
     @Override
-    public Object evaluate(CallStack callStack) throws UndefinedVariableException, InvalidTypeException {
+    public Object evaluate(CallStack callStack) throws UndefinedVariableException, InvalidTypeException, InvalidFunctionCall {
         ActivationRecord activationRecord = new ActivationRecord(this.name, ARType.FUNCTION, 0);
 
         ArrayList<VariableSymbol> parameters = this.symbol.getParameters();
 
-        for (int i = 0; i < Math.min(parameters.size(), this.arguments.size()); i++) {
+        if (parameters.size() > this.arguments.size()) {
+            throw new InvalidFunctionCall(String.format("Function %s expects %d arguments. Got %d instead.", this.getName(), parameters.size(), this.arguments.size()));
+        }
+
+        for (int i = 0; i < parameters.size(); i++) {
             activationRecord.put(parameters.get(i).getName(), this.arguments.get(i).evaluate(callStack));
         }
 

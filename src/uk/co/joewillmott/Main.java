@@ -8,7 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class Main {
-    public static void main(String[] args) throws UnableToPeekException, InvalidSyntaxException, UndefinedVariableException, InvalidTypeException, IOException, UndefinedFunctionException {
+    public static void main(String[] args) throws UnableToPeekException, InvalidSyntaxException, UndefinedVariableException, InvalidTypeException, IOException, UndefinedFunctionException, InvalidFunctionCall {
         String content = new String(Files.readAllBytes(Paths.get("C:\\Users\\Joe\\Desktop\\Interpreter\\src\\uk\\co\\joewillmott\\prog.txt")));
         content = content.replaceAll("[\\r\\n]", " ");
 

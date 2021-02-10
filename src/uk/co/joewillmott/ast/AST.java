@@ -1,5 +1,6 @@
 package uk.co.joewillmott.ast;
 
+import uk.co.joewillmott.exceptions.InvalidFunctionCall;
 import uk.co.joewillmott.exceptions.InvalidTypeException;
 import uk.co.joewillmott.exceptions.UndefinedFunctionException;
 import uk.co.joewillmott.exceptions.UndefinedVariableException;
@@ -34,7 +35,7 @@ public abstract class AST {
         return right;
     }
 
-    public abstract Object evaluate(CallStack callStack) throws UndefinedVariableException, InvalidTypeException;
+    public abstract Object evaluate(CallStack callStack) throws UndefinedVariableException, InvalidTypeException, InvalidFunctionCall;
 
     public abstract void visit(ScopedSymbolTable symbolTable) throws UndefinedVariableException, InvalidTypeException, UndefinedFunctionException;
 }
