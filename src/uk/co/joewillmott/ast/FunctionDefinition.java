@@ -58,7 +58,7 @@ public class FunctionDefinition extends AST {
         ScopedSymbolTable functionScope = new ScopedSymbolTable(this.name, symbolTable.getScopeLevel() + 1, true, symbolTable, symbolTable.getGlobalScope());
 
         for (AST parameter : this.parameters) {
-            String parameterName = parameter.getValue();
+            String parameterName = parameter.getValue().toString();
             VariableSymbol parameterSymbol = new VariableSymbol(parameterName);
 
             functionScope.put(parameterName, parameterSymbol);

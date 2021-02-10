@@ -11,7 +11,7 @@ public class BooleanNode extends AST {
 
     @Override
     public Boolean evaluate(CallStack callStack) {
-        return Boolean.valueOf(this.getToken().getValue());
+        return Boolean.parseBoolean(this.getToken().getValue());
     }
 
     @Override

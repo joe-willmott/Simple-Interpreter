@@ -12,15 +12,15 @@ public class Variable extends AST {
 
     @Override
     public Object evaluate(CallStack callStack) throws UndefinedVariableException {
-        String varName = this.getValue();
+        String varName = this.getValue().toString();
 
         return callStack.findVar(varName);
     }
 
     @Override
     public void visit(ScopedSymbolTable symbolTable) throws UndefinedVariableException {
-        if (symbolTable.lookup(this.getValue(), false) == null) {
-            throw new UndefinedVariableException(this.getValue());
+        if (symbolTable.lookup(this.getValue().toString(), false) == null) {
+            throw new UndefinedVariableException(this.getValue().toString());
         }
     }
 }

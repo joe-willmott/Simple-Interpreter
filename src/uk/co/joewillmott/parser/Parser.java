@@ -45,40 +45,34 @@ public class Parser {
 
         switch (tokenType) {
             case ADD:
-                this.chomp(TokenType.ADD);
-                return new UnaryOperation(token, this.factor());
             case SUB:
-                this.chomp(TokenType.SUB);
+            case NEGATE:
+                this.chomp(tokenType);
                 return new UnaryOperation(token, this.factor());
             case INT:
-                this.chomp(TokenType.INT);
+            case FLOAT:
+                this.chomp(tokenType);
                 return new NumberConstant(token);
             case STRING:
-                this.chomp(TokenType.STRING);
+                this.chomp(tokenType);
                 return new StringConstant(token);
-            case FLOAT:
-                this.chomp(TokenType.FLOAT);
-                return new NumberConstant(token);
             case LPAREN:
-                this.chomp(TokenType.LPAREN);
+                this.chomp(tokenType);
                 AST node = this.comparisonExpression();
                 this.chomp(TokenType.RPAREN);
                 return node;
             case BOOL:
-                this.chomp(TokenType.BOOL);
+                this.chomp(tokenType);
                 return new BooleanNode(token);
-            case NEGATE:
-                this.chomp(TokenType.NEGATE);
-                return new UnaryOperation(token, this.factor());
             default:
-                return this.variableOrFunctionionCall();
+                return this.variableOrFunctionCall();
         }
     }
 
     private AST comparisonExpression() throws UnableToPeekException, InvalidSyntaxException {
         AST node = this.arithmeticExpression();
 
-        while (this.currentToken.getType() == TokenType.GREATER_THAN || this.currentToken.getType() == TokenType.LESS_THAN) {
+        while (this.currentToken.getType() == TokenType.GREATER_THAN || this.currentToken.getType() == TokenType.LESS_THAN || this.currentToken.getType() == TokenType.EQUALITY || this.currentToken.getType() == TokenType.INV_EQUALITY) {
             Token token = this.currentToken;
             this.chomp(this.currentToken.getType());
 
@@ -101,7 +95,7 @@ public class Parser {
         return node;
     }
 
-    private AST variableOrFunctionionCall() throws UnableToPeekException, InvalidSyntaxException {
+    private AST variableOrFunctionCall() throws UnableToPeekException, InvalidSyntaxException {
         if (this.currentToken.getType() == TokenType.ID && this.lexer.getCurrentChar() == '(') {
             return this.functionCall();
         }

@@ -1,10 +1,16 @@
 fun factorial(x) {
-    if (x < 2) {
+    if (x < 0) {
+        error("X cannot be < 0.");
+    };
+
+    if (x == 0) {
         return 1;
     };
 
     return x * factorial(x - 1);
 };
 
-y = factorial(5);
-println(y);
+input = input("> ");
+int = toint(input);
+result = factorial(int);
+println("The result of " .. int .. "! is " .. result .. ".");

@@ -19,6 +19,11 @@ public class Interpreter {
         put("println", new PrintlnFunction());
         put("floor", new FloorFunction());
         put("error", new ErrorFunction());
+        put("toint", new ToIntFunction());
+        put("tofloat", new ToFloatFunction());
+        put("tostring", new ToStringFunction());
+        put("tobool", new ToBoolFunction());
+        put("input", new InputFunction());
     }};
 
     public Interpreter(String program) {

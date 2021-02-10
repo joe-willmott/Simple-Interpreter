@@ -82,6 +82,11 @@ public class Lexer {
             result.append(this.currentChar);
             this.advance();
 
+            while (!this.finished && !Character.isWhitespace(this.currentChar) && Character.isDigit(this.currentChar)) {
+                result.append(this.currentChar);
+                this.advance();
+            }
+
             return new Token(TokenType.FLOAT, result.toString());
         }
 
@@ -146,6 +151,18 @@ public class Lexer {
                 this.advance();
                 this.advance();
                 return new Token(TokenType.INT_DIV, "//");
+            }
+
+            if (this.currentChar == '=' && this.peek() == '=') {
+                this.advance();
+                this.advance();
+                return new Token(TokenType.EQUALITY, "==");
+            }
+
+            if (this.currentChar == '<' && this.peek() == '>') {
+                this.advance();
+                this.advance();
+                return new Token(TokenType.INV_EQUALITY, "<>");
             }
 
             if (this.currentChar == '.' && this.peek() == '.') {

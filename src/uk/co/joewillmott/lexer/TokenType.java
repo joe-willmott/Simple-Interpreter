@@ -5,15 +5,17 @@ public enum TokenType {
     SUB("SUB"),
     MUL("MUL"),
     DIV("DIV"),
-    INT_DIV("INT_DIV"),
+    INT_DIV("INT DIV"),
 
     BOOL("BOOL"),
     INT("INT"),
     FLOAT("FLOAT"),
     STRING("STRING"),
 
-    GREATER_THAN("GREATER_THAN"),
-    LESS_THAN("LESS_THAN"),
+    GREATER_THAN("GREATER THAN"),
+    LESS_THAN("LESS THAN"),
+    EQUALITY("EQUAL"),
+    INV_EQUALITY("NOT EQUAL"),
 
     OR("OR"),
     AND("AND"),

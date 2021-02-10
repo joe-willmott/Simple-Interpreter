@@ -1,3 +1,16 @@
-x = "this is some dumb text";
-println(x);
-error("TEST");
+fun factorial(x) {
+    if (x < 0) {
+        error("X cannot be < 0.");
+    };
+
+    if (x == 0) {
+        return 1;
+    };
+
+    return x * factorial(x - 1);
+};
+
+input = input("> ");
+int = toint(input);
+result = factorial(int);
+println("The result of " .. int .. "! is " .. result .. ".");
