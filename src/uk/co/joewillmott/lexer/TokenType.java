@@ -9,7 +9,7 @@ public enum TokenType {
 
     BOOL("BOOL"),
     INT("INT"),
-    FLOAT("FLOAT"),
+    Double("Double"),
     STRING("STRING"),
 
     GREATER_THAN("GREATER THAN"),
@@ -25,6 +25,8 @@ public enum TokenType {
     RPAREN("RPAREN"),
     LBRACE("LBRACE"),
     RBRACE("RBRACE"),
+    LBRACE_SQUARE("LBRACE_SQUARE"),
+    RBRACE_SQUARE("RBRACE_SQUARE"),
 
     EOF("EOF"),
     ID("ID"),
@@ -36,8 +38,12 @@ public enum TokenType {
     ELSE("ELSE"),
     WHILE("WHILE"),
     RETURN("RETURN"),
+    NULL("NULL"),
     CONCAT("CONCAT"),
-    DBL_QUOTE("\"");
+    DBL_QUOTE("\""),
+    NEWLINE("\n"),
+    IMPORT("IMPORT"),
+    FULL_STOP(".");
 
     public final String label;
 

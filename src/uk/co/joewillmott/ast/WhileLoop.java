@@ -5,10 +5,12 @@ import uk.co.joewillmott.exceptions.InvalidTypeException;
 import uk.co.joewillmott.exceptions.UndefinedFunctionException;
 import uk.co.joewillmott.exceptions.UndefinedVariableException;
 import uk.co.joewillmott.interpreter.CallStack;
-import uk.co.joewillmott.semanticanalyser.ScopedSymbolTable;
+import uk.co.joewillmott.interpreter.ReturnValue;
+
+import java.lang.reflect.InvocationTargetException;
 
 public class WhileLoop extends AST {
-    private AST condition;
+    private final AST condition;
 
     public WhileLoop(AST left, AST condition) {
         super(left, null, null);
@@ -16,19 +18,17 @@ public class WhileLoop extends AST {
     }
 
     @Override
-    public Object evaluate(CallStack callStack) throws UndefinedVariableException, InvalidTypeException, InvalidFunctionCall {
-        Object returnValue = null;
+    public ReturnValue evaluate(CallStack callStack) throws UndefinedVariableException, InvalidTypeException, InvalidFunctionCall, UndefinedFunctionException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        Object returnValue;
 
         while ((boolean) this.condition.evaluate(callStack)) {
             returnValue = this.getLeft().evaluate(callStack);
+
+            if (returnValue != null) {
+                return new ReturnValue(returnValue);
+            }
         }
 
-        return returnValue;
-    }
-
-    @Override
-    public void visit(ScopedSymbolTable symbolTable) throws UndefinedVariableException, InvalidTypeException, UndefinedFunctionException {
-        this.condition.visit(symbolTable);
-        this.getLeft().visit(symbolTable);
+        return null;
     }
 }

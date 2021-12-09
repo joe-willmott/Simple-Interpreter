@@ -1,7 +1,7 @@
-package uk.co.joewillmott.semanticanalyser.symbol;
+package uk.co.joewillmott.interpreter.symbols;
 
 public class Symbol {
-    private String name;
+    private final String name;
 
     public Symbol(String name) {
         this.name = name;

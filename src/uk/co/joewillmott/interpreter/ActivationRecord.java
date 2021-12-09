@@ -3,14 +3,12 @@ package uk.co.joewillmott.interpreter;
 import java.util.HashMap;
 
 public class ActivationRecord extends HashMap<String, Object> {
-    private String name;
-    private ARType type;
-    private int nesting_level;
+    private final String name;
+    private final ARType type;
 
-    public ActivationRecord(String name, ARType type, int nesting_level) {
+    public ActivationRecord(String name, ARType type) {
         this.name = name;
         this.type = type;
-        this.nesting_level = nesting_level;
     }
 
     public String getName() {
@@ -19,5 +17,10 @@ public class ActivationRecord extends HashMap<String, Object> {
 
     public ARType getType() {
         return type;
+    }
+
+    public enum ARType {
+        GLOBALS,
+        FUNCTION
     }
 }

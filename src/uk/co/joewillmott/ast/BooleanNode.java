@@ -2,7 +2,6 @@ package uk.co.joewillmott.ast;
 
 import uk.co.joewillmott.interpreter.CallStack;
 import uk.co.joewillmott.lexer.Token;
-import uk.co.joewillmott.semanticanalyser.ScopedSymbolTable;
 
 public class BooleanNode extends AST {
     public BooleanNode(Token token) {
@@ -12,10 +11,6 @@ public class BooleanNode extends AST {
     @Override
     public Boolean evaluate(CallStack callStack) {
         return Boolean.parseBoolean(this.getToken().getValue());
-    }
-
-    @Override
-    public void visit(ScopedSymbolTable symbolTable) {
     }
 }
 

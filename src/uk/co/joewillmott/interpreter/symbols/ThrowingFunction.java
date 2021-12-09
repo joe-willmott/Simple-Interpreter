@@ -1,4 +1,4 @@
-package uk.co.joewillmott.semanticanalyser.symbol;
+package uk.co.joewillmott.interpreter.symbols;
 
 import uk.co.joewillmott.ast.AST;
 import uk.co.joewillmott.exceptions.UndefinedVariableException;

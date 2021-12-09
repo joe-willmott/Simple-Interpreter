@@ -6,12 +6,13 @@ import uk.co.joewillmott.exceptions.UndefinedFunctionException;
 import uk.co.joewillmott.exceptions.UndefinedVariableException;
 import uk.co.joewillmott.interpreter.CallStack;
 import uk.co.joewillmott.lexer.Token;
-import uk.co.joewillmott.semanticanalyser.ScopedSymbolTable;
+
+import java.lang.reflect.InvocationTargetException;
 
 public abstract class AST {
-    private AST left;
-    private Token token;
-    private AST right;
+    private final AST left;
+    private final Token token;
+    private final AST right;
 
     public AST(AST left, Token token, AST right) {
         this.left = left;
@@ -35,7 +36,5 @@ public abstract class AST {
         return right;
     }
 
-    public abstract Object evaluate(CallStack callStack) throws UndefinedVariableException, InvalidTypeException, InvalidFunctionCall;
-
-    public abstract void visit(ScopedSymbolTable symbolTable) throws UndefinedVariableException, InvalidTypeException, UndefinedFunctionException;
+    public abstract Object evaluate(CallStack callStack) throws UndefinedVariableException, InvalidTypeException, InvalidFunctionCall, UndefinedFunctionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException;
 }

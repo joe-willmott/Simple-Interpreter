@@ -10,19 +10,22 @@ import uk.co.joewillmott.lexer.TokenType;
 import java.util.ArrayList;
 
 public class Parser {
-    private Lexer lexer;
+    private final Lexer lexer;
     private Token currentToken;
+    private Token previousToken;
 
     public Parser(Lexer lexer) throws UnableToPeekException {
         this.lexer = lexer;
         this.currentToken = lexer.getNextToken();
+        this.previousToken = this.currentToken;
     }
 
     private void chomp(TokenType tokenType) throws UnableToPeekException, InvalidSyntaxException {
         if (this.currentToken.getType() == tokenType) {
+            this.previousToken = this.currentToken;
             this.currentToken = this.lexer.getNextToken();
         } else {
-            throw new InvalidSyntaxException(String.format("UnexpectedToken: %s | ExpectedToken: %s", this.currentToken, tokenType));
+            throw new InvalidSyntaxException(String.format("UnexpectedToken: %s | ExpectedToken: %s at %d, %d", this.currentToken, tokenType, this.previousToken.getLine(), this.previousToken.getCol()));
         }
     }
 
@@ -50,7 +53,7 @@ public class Parser {
                 this.chomp(tokenType);
                 return new UnaryOperation(token, this.factor());
             case INT:
-            case FLOAT:
+            case Double:
                 this.chomp(tokenType);
                 return new NumberConstant(token);
             case STRING:
@@ -100,12 +103,24 @@ public class Parser {
             return this.functionCall();
         }
 
+//        if (this.currentToken.getType() == TokenType.LBRACE_SQUARE) {
+//            this.chomp(TokenType.LBRACE_SQUARE);
+//            this.chomp(TokenType.RBRACE_SQUARE);
+//            return new List();
+//        }
+
+        if (this.currentToken.getType() == TokenType.ID && this.lexer.getCurrentChar() == '.') {
+            return this.methodCall();
+        }
+
         return this.variable();
     }
 
     private Variable variable() throws InvalidSyntaxException, UnableToPeekException {
         Variable node = new Variable(this.currentToken);
+
         this.chomp(TokenType.ID);
+
         return node;
     }
 
@@ -134,12 +149,13 @@ public class Parser {
         Block block = this.block();
         this.chomp(TokenType.RBRACE);
 
-        return new FunctionDefinition(functionName, parameters, block, false);
+        return new FunctionDefinition(functionName, parameters, block);
     }
 
     private Assignment assignmentStatement() throws UnableToPeekException, InvalidSyntaxException {
         AST left = this.variable();
         this.chomp(TokenType.ASSIGN);
+
         return new Assignment(left, this.currentToken, this.comparisonExpression());
     }
 
@@ -215,6 +231,10 @@ public class Parser {
             return this.functionCall();
         }
 
+        if (tokenType == TokenType.ID && this.lexer.getCurrentChar() == '.') {
+            return this.methodCall();
+        }
+
         switch (tokenType) {
             case IF:
                 return this.conditionalStatement();
@@ -228,11 +248,21 @@ public class Parser {
                 return this.functionDefinition();
             case BOOL:
             case INT:
-            case FLOAT:
+            case Double:
                 return this.comparisonExpression();
             default:
                 return new NoOperation();
         }
+    }
+
+    private MethodCall methodCall() throws UnableToPeekException, InvalidSyntaxException {
+        Variable variable = this.variable();
+
+        this.chomp(TokenType.FULL_STOP);
+
+        FunctionCall functionCall = this.functionCall();
+
+        return new MethodCall(variable, functionCall);
     }
 
     private Block block() throws UnableToPeekException, InvalidSyntaxException {
@@ -241,9 +271,18 @@ public class Parser {
         Block block = new Block();
         block.addStatement(node);
 
-        while (this.currentToken.getType() == TokenType.SEMI) {
+        while ((this.currentToken = this.lexer.getNextToken()).getType() == TokenType.NEWLINE) {
+            this.previousToken = this.currentToken;
+        }
+
+        AST statement;
+        while ((statement = this.statement()) != null && !(statement instanceof NoOperation)) {
             this.chomp(TokenType.SEMI);
-            block.addStatement(this.statement());
+            block.addStatement(statement);
+
+            while ((this.currentToken = this.lexer.getNextToken()).getType() == TokenType.NEWLINE) {
+                this.previousToken = this.currentToken;
+            }
         }
 
         return block;

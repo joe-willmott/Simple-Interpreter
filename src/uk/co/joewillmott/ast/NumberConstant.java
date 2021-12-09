@@ -3,7 +3,6 @@ package uk.co.joewillmott.ast;
 import uk.co.joewillmott.interpreter.CallStack;
 import uk.co.joewillmott.lexer.Token;
 import uk.co.joewillmott.lexer.TokenType;
-import uk.co.joewillmott.semanticanalyser.ScopedSymbolTable;
 
 public class NumberConstant extends AST {
     public NumberConstant(Token token) {
@@ -14,17 +13,13 @@ public class NumberConstant extends AST {
     public Number evaluate(CallStack callStack) {
         String value = this.getToken().getValue();
 
-        if (this.getToken().getType() == TokenType.FLOAT) {
-            return Float.parseFloat(value);
+        if (this.getToken().getType() == TokenType.Double) {
+            return Double.parseDouble(value);
         } else {
-            return Integer.parseInt(value);
+            return Long.parseLong(value);
         }
 
         // For some odd reason this didn't work but ^ did. :shrug:
-//        return (this.getToken().getType() == TokenType.FLOAT) ? Float.parseFloat(value) : Integer.parseInt(value);
-    }
-
-    @Override
-    public void visit(ScopedSymbolTable symbolTable) {
+//        return (this.getToken().getType() == TokenType.Double) ? Double.parseDouble(value) : Long.parseLong(value);
     }
 }

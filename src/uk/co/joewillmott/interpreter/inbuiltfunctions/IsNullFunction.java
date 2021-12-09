@@ -8,17 +8,23 @@ import uk.co.joewillmott.interpreter.symbols.VariableSymbol;
 
 import java.util.ArrayList;
 
-public class ErrorFunction extends InbuiltFunction {
-    public ErrorFunction() {
-        super("error");
+public class IsNullFunction extends InbuiltFunction {
+    public IsNullFunction() {
+        super("isnull");
 
         this.addParameter(new VariableSymbol("a"));
-        this.setCustomFunction(ErrorFunction::run);
+        this.setCustomFunction(IsNullFunction::run);
     }
 
     public static ReturnValue run(ArrayList<AST> arguments, CallStack callStack) throws UndefinedVariableException {
-        Object argumentValue = callStack.findVar("a");
+        Object returnValue;
 
-        throw new RuntimeException(argumentValue.toString());
+        try {
+            returnValue = callStack.findVar("a") == null;
+        } catch (UndefinedVariableException ignored) {
+            returnValue = true;
+        }
+
+        return new ReturnValue(returnValue);
     }
 }

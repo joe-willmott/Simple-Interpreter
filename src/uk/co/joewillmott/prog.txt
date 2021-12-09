@@ -10,8 +10,8 @@ fun factorial(x) {
     return x * factorial(x - 1);
 };
 
-input = input("> ");
-int = toint(input);
+userInput = input("Please enter an integer: ");
+int = toint(userInput);
 result = factorial(int);
 
 println("The result of " .. int .. "! is " .. result .. ".");

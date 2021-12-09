@@ -5,10 +5,12 @@ import uk.co.joewillmott.exceptions.InvalidTypeException;
 import uk.co.joewillmott.exceptions.UndefinedFunctionException;
 import uk.co.joewillmott.exceptions.UndefinedVariableException;
 import uk.co.joewillmott.interpreter.CallStack;
-import uk.co.joewillmott.semanticanalyser.ScopedSymbolTable;
+import uk.co.joewillmott.interpreter.ReturnValue;
+
+import java.lang.reflect.InvocationTargetException;
 
 public class Program extends AST {
-    private Block block;
+    private final Block block;
 
     public Program(Block block) {
         super(null, null, null);
@@ -16,14 +18,7 @@ public class Program extends AST {
     }
 
     @Override
-    public Object evaluate(CallStack callStack) throws UndefinedVariableException, InvalidTypeException, InvalidFunctionCall {
-        this.block.evaluate(callStack);
-
-        return null;
-    }
-
-    @Override
-    public void visit(ScopedSymbolTable symbolTable) throws UndefinedVariableException, InvalidTypeException, UndefinedFunctionException {
-        this.block.visit(symbolTable);
+    public ReturnValue evaluate(CallStack callStack) throws UndefinedVariableException, InvalidTypeException, InvalidFunctionCall, UndefinedFunctionException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        return (ReturnValue) this.block.evaluate(callStack);
     }
 }

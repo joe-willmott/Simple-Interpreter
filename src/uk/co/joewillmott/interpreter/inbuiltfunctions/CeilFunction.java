@@ -8,17 +8,17 @@ import uk.co.joewillmott.interpreter.symbols.VariableSymbol;
 
 import java.util.ArrayList;
 
-public class ErrorFunction extends InbuiltFunction {
-    public ErrorFunction() {
-        super("error");
+public class CeilFunction extends InbuiltFunction {
+    public CeilFunction() {
+        super("floor");
 
         this.addParameter(new VariableSymbol("a"));
-        this.setCustomFunction(ErrorFunction::run);
+        this.setCustomFunction(CeilFunction::run);
     }
 
     public static ReturnValue run(ArrayList<AST> arguments, CallStack callStack) throws UndefinedVariableException {
         Object argumentValue = callStack.findVar("a");
 
-        throw new RuntimeException(argumentValue.toString());
+        return new ReturnValue((int) Math.ceil((Double) argumentValue));
     }
 }

@@ -3,7 +3,8 @@ package uk.co.joewillmott.interpreter.inbuiltfunctions;
 import uk.co.joewillmott.ast.AST;
 import uk.co.joewillmott.exceptions.UndefinedVariableException;
 import uk.co.joewillmott.interpreter.CallStack;
-import uk.co.joewillmott.semanticanalyser.symbol.VariableSymbol;
+import uk.co.joewillmott.interpreter.ReturnValue;
+import uk.co.joewillmott.interpreter.symbols.VariableSymbol;
 
 import java.util.ArrayList;
 
@@ -15,11 +16,11 @@ public class TypeFunction extends InbuiltFunction {
         this.setCustomFunction(TypeFunction::run);
     }
 
-    public static String run(ArrayList<AST> arguments, CallStack callStack) throws UndefinedVariableException {
+    public static ReturnValue run(ArrayList<AST> arguments, CallStack callStack) throws UndefinedVariableException {
         Object argumentValue = callStack.findVar("a");
 
         String className = argumentValue.getClass().getSimpleName();
 
-        return (className.equals("Integer")) ? "int" : className.toLowerCase();
+        return new ReturnValue((className.equals("Long")) ? "int" : className.toLowerCase());
     }
 }

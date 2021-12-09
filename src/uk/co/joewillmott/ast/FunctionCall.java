@@ -4,20 +4,18 @@ import uk.co.joewillmott.exceptions.InvalidFunctionCall;
 import uk.co.joewillmott.exceptions.InvalidTypeException;
 import uk.co.joewillmott.exceptions.UndefinedFunctionException;
 import uk.co.joewillmott.exceptions.UndefinedVariableException;
-import uk.co.joewillmott.interpreter.ARType;
 import uk.co.joewillmott.interpreter.ActivationRecord;
 import uk.co.joewillmott.interpreter.CallStack;
-import uk.co.joewillmott.semanticanalyser.ScopedSymbolTable;
-import uk.co.joewillmott.semanticanalyser.symbol.FunctionSymbol;
-import uk.co.joewillmott.semanticanalyser.symbol.Symbol;
-import uk.co.joewillmott.semanticanalyser.symbol.VariableSymbol;
+import uk.co.joewillmott.interpreter.ReturnValue;
+import uk.co.joewillmott.interpreter.symbols.FunctionSymbol;
+import uk.co.joewillmott.interpreter.symbols.VariableSymbol;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 public class FunctionCall extends AST {
-    private String name;
-    private ArrayList<AST> arguments;
-    private FunctionSymbol symbol;
+    private final String name;
+    private final ArrayList<AST> arguments;
 
     public FunctionCall(String name, ArrayList<AST> arguments) {
         super(null, null, null);
@@ -33,15 +31,19 @@ public class FunctionCall extends AST {
         return arguments;
     }
 
-    public Symbol getSymbol() {
-        return symbol;
-    }
-
     @Override
-    public Object evaluate(CallStack callStack) throws UndefinedVariableException, InvalidTypeException, InvalidFunctionCall {
-        ActivationRecord activationRecord = new ActivationRecord(this.name, ARType.FUNCTION, 0);
+    public Object evaluate(CallStack callStack) throws UndefinedVariableException, InvalidTypeException, InvalidFunctionCall, UndefinedFunctionException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        ActivationRecord activationRecord = new ActivationRecord(this.name, ActivationRecord.ARType.FUNCTION);
 
-        ArrayList<VariableSymbol> parameters = this.symbol.getParameters();
+        Object result = callStack.findVar(this.name);
+
+        if (!(result instanceof FunctionSymbol)) {
+            throw new UndefinedFunctionException(String.format("%s is not a callable function.", this.name));
+        }
+
+        FunctionSymbol functionSymbol = (FunctionSymbol) result;
+
+        ArrayList<VariableSymbol> parameters = functionSymbol.getParameters();
 
         if (parameters.size() > this.arguments.size()) {
             throw new InvalidFunctionCall(String.format("Function %s expects %d arguments. Got %d instead.", this.getName(), parameters.size(), this.arguments.size()));
@@ -55,34 +57,14 @@ public class FunctionCall extends AST {
 
         Object returnValue;
 
-        if (this.symbol.getCustomFunction() != null) {
-            returnValue = this.symbol.getCustomFunction().run(arguments, callStack);
+        if (functionSymbol.getCustomFunction() != null) {
+            returnValue = functionSymbol.getCustomFunction().run(arguments, callStack);
         } else {
-            returnValue = this.symbol.getBlock().evaluate(callStack);
+            returnValue = functionSymbol.getBlock().evaluate(callStack);
         }
 
         callStack.pop();
 
-        return returnValue;
-    }
-
-    @Override
-    public void visit(ScopedSymbolTable symbolTable) throws UndefinedVariableException, InvalidTypeException, UndefinedFunctionException {
-        for (AST argument : arguments) {
-            argument.visit(symbolTable);
-        }
-
-        FunctionSymbol symbol;
-        try {
-            symbol = (FunctionSymbol) symbolTable.lookup(this.getName(), false);
-
-            if (symbol == null) {
-                throw new UndefinedFunctionException(this.getName());
-            }
-        } catch (ClassCastException e) {
-            throw new UndefinedFunctionException(this.getName());
-        }
-
-        this.symbol = symbol;
+        return (returnValue instanceof ReturnValue) ? ((ReturnValue) returnValue).getValue() : null;
     }
 }

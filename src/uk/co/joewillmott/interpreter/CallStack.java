@@ -6,39 +6,34 @@ import java.util.Stack;
 
 public class CallStack extends Stack<ActivationRecord> {
     public CallStack() {
-        this.push(new ActivationRecord("GLOBALS", ARType.GLOBALS, 0));
-    }
-
-    public void setGlobal(String varName, Object value) {
-        this.get(0).put(varName, value);
+        this.push(new ActivationRecord("GLOBALS", ActivationRecord.ARType.GLOBALS));
     }
 
     public Object findVar(String varName) throws UndefinedVariableException {
-        Object varValue = this.peek().get(varName);
+        ActivationRecord topScope = this.peek();
 
-        if (varValue != null) {
-            return varValue;
+        if (topScope.containsKey(varName)) {
+            return topScope.get(varName);
         }
 
         for (int i = this.size() - 2; i > 0; i--) {
-            if (this.get(i).getType() == ARType.FUNCTION) {
+            if (this.get(i).getType() == ActivationRecord.ARType.FUNCTION) {
                 break;
             }
 
-            varValue = this.get(i).get(varName);
+            ActivationRecord scope = this.get(i);
 
-            if (varValue != null) {
-                return varValue;
+            if (scope.containsKey(varName)) {
+                return scope.get(varName);
             }
         }
 
         ActivationRecord globalScope = this.get(0);
-        varValue = globalScope.get(varName);
 
-        if (varValue != null) {
-            return varValue;
-        } else {
+        if (!globalScope.containsKey(varName)) {
             throw new UndefinedVariableException(varName);
         }
+
+        return globalScope.get(varName);
     }
 }

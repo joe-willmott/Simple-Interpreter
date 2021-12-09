@@ -6,7 +6,8 @@ import uk.co.joewillmott.exceptions.UndefinedFunctionException;
 import uk.co.joewillmott.exceptions.UndefinedVariableException;
 import uk.co.joewillmott.interpreter.CallStack;
 import uk.co.joewillmott.lexer.Token;
-import uk.co.joewillmott.semanticanalyser.ScopedSymbolTable;
+
+import java.lang.reflect.InvocationTargetException;
 
 public class BinaryOperation extends AST {
     public BinaryOperation(AST left, Token token, AST right) {
@@ -22,7 +23,7 @@ public class BinaryOperation extends AST {
     }
 
     private boolean isNumber(Object a) {
-        return a instanceof Float || a instanceof Integer;
+        return a instanceof Double || a instanceof Long;
     }
 
     private boolean isString(Object a) {
@@ -44,39 +45,39 @@ public class BinaryOperation extends AST {
     private Number add(Object a, Object b) throws InvalidTypeException {
         checkNumbers(a, b);
 
-        if (a instanceof Float || b instanceof Float) {
-            return Float.parseFloat(a.toString()) + Float.parseFloat(b.toString());
+        if (a instanceof Double || b instanceof Double) {
+            return Double.parseDouble(a.toString()) + Double.parseDouble(b.toString());
         } else {
-            return Integer.parseInt(a.toString()) + Integer.parseInt(b.toString());
+            return Long.parseLong(a.toString()) + Long.parseLong(b.toString());
         }
     }
 
     public Number sub(Object a, Object b) throws InvalidTypeException {
         checkNumbers(a, b);
 
-        if (a instanceof Float || b instanceof Float) {
-            return Float.parseFloat(a.toString()) - Float.parseFloat(b.toString());
+        if (a instanceof Double || b instanceof Double) {
+            return Double.parseDouble(a.toString()) - Double.parseDouble(b.toString());
         } else {
-            return Integer.parseInt(a.toString()) - Integer.parseInt(b.toString());
+            return Long.parseLong(a.toString()) - Long.parseLong(b.toString());
         }
     }
 
     public Number mul(Object a, Object b) throws InvalidTypeException {
         checkNumbers(a, b);
 
-        if (a instanceof Float || b instanceof Float) {
-            return Float.parseFloat(a.toString()) * Float.parseFloat(b.toString());
+        if (a instanceof Double || b instanceof Double) {
+            return Double.parseDouble(a.toString()) * Double.parseDouble(b.toString());
         } else {
-            return Integer.parseInt(a.toString()) * Integer.parseInt(b.toString());
+            return Long.parseLong(a.toString()) * Long.parseLong(b.toString());
         }
     }
 
-    public Float div(Object a, Object b) throws InvalidTypeException {
+    public Double div(Object a, Object b) throws InvalidTypeException {
         checkNumbers(a, b);
-        return Float.parseFloat(a.toString()) / Float.parseFloat(b.toString());
+        return Double.parseDouble(a.toString()) / Double.parseDouble(b.toString());
     }
 
-    public Integer intDiv(Object a, Object b) throws InvalidTypeException {
+    public Long intDiv(Object a, Object b) throws InvalidTypeException {
         checkNumbers(a, b);
         return Math.round(div(a, b));
     }
@@ -93,17 +94,17 @@ public class BinaryOperation extends AST {
 
     public Boolean greaterThan(Object a, Object b) throws InvalidTypeException {
         checkNumbers(a, b);
-        return Float.parseFloat(a.toString()) > Float.parseFloat(b.toString());
+        return Double.parseDouble(a.toString()) > Double.parseDouble(b.toString());
     }
 
     public Boolean lessThan(Object a, Object b) throws InvalidTypeException {
         checkNumbers(a, b);
-        return Float.parseFloat(a.toString()) < Float.parseFloat(b.toString());
+        return Double.parseDouble(a.toString()) < Double.parseDouble(b.toString());
     }
 
     private Boolean equal(Object a, Object b) throws InvalidTypeException {
         if (isNumber(a) && isNumber(b)) {
-            return Float.compare(Float.parseFloat(a.toString()), Float.parseFloat(b.toString())) == 0;
+            return Double.compare(Double.parseDouble(a.toString()), Double.parseDouble(b.toString())) == 0;
         }
 
         if (isBoolean(a) && isBoolean(b)) {
@@ -119,7 +120,7 @@ public class BinaryOperation extends AST {
     }
 
     @Override
-    public Object evaluate(CallStack callStack) throws UndefinedVariableException, InvalidTypeException, InvalidFunctionCall {
+    public Object evaluate(CallStack callStack) throws UndefinedVariableException, InvalidTypeException, InvalidFunctionCall, UndefinedFunctionException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         Object a = this.getLeft().evaluate(callStack);
         Object b = this.getRight().evaluate(callStack);
 
@@ -152,11 +153,5 @@ public class BinaryOperation extends AST {
         }
 
         return null;
-    }
-
-    @Override
-    public void visit(ScopedSymbolTable symbolTable) throws UndefinedVariableException, InvalidTypeException, UndefinedFunctionException {
-        this.getLeft().visit(symbolTable);
-        this.getRight().visit(symbolTable);
     }
 }

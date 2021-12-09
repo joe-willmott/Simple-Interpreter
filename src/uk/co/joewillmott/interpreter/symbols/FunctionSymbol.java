@@ -1,13 +1,14 @@
-package uk.co.joewillmott.semanticanalyser.symbol;
+package uk.co.joewillmott.interpreter.symbols;
 
 import uk.co.joewillmott.ast.Block;
+import uk.co.joewillmott.interpreter.ReturnValue;
 
 import java.util.ArrayList;
 
 public class FunctionSymbol extends Symbol {
-    private Block block;
-    private ArrayList<VariableSymbol> parameters = new ArrayList<>();
-    private ThrowingFunction<Object> customFunction;
+    private final Block block;
+    private final ArrayList<VariableSymbol> parameters = new ArrayList<>();
+    private ThrowingFunction<ReturnValue> customFunction;
 
     public FunctionSymbol(String name, Block block) {
         super(name);
@@ -26,11 +27,11 @@ public class FunctionSymbol extends Symbol {
         parameters.add(argument);
     }
 
-    public ThrowingFunction<Object> getCustomFunction() {
+    public ThrowingFunction<ReturnValue> getCustomFunction() {
         return customFunction;
     }
 
-    public void setCustomFunction(ThrowingFunction<Object> customFunction) {
+    public void setCustomFunction(ThrowingFunction<ReturnValue> customFunction) {
         this.customFunction = customFunction;
     }
 }
