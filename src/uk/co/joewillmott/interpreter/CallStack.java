@@ -31,7 +31,7 @@ public class CallStack extends Stack<ActivationRecord> {
         ActivationRecord globalScope = this.get(0);
 
         if (!globalScope.containsKey(varName)) {
-            throw new UndefinedVariableException(varName);
+            throw new UndefinedVariableException(String.format("Undefined variable: %s", varName));
         }
 
         return globalScope.get(varName);

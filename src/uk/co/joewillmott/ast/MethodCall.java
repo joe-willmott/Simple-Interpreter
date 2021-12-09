@@ -35,6 +35,8 @@ public class MethodCall extends AST {
                 classes[i] = long.class;
             } else if (result.getClass() == Double.class) {
                 classes[i] = double.class;
+            } else if (result.getClass() == Integer.class) {
+                classes[i] = int.class;
             } else {
                 classes[i] = Object.class;
             }

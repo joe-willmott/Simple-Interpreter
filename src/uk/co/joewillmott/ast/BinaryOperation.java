@@ -23,7 +23,7 @@ public class BinaryOperation extends AST {
     }
 
     private boolean isNumber(Object a) {
-        return a instanceof Double || a instanceof Long;
+        return a instanceof Double || a instanceof Long || a instanceof Integer;
     }
 
     private boolean isString(Object a) {

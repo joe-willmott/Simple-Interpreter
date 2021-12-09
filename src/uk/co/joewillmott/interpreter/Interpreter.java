@@ -21,7 +21,8 @@ public class Interpreter {
         put("ceil", new CeilFunction());
         put("error", new ErrorFunction());
         put("toint", new ToIntFunction());
-        put("toDouble", new ToDoubleFunction());
+        put("tolong", new ToLongFunction());
+        put("todouble", new ToDoubleFunction());
         put("tostring", new ToStringFunction());
         put("tobool", new ToBoolFunction());
         put("type", new TypeFunction());

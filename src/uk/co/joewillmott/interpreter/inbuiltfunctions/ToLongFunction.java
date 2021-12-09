@@ -8,9 +8,9 @@ import uk.co.joewillmott.interpreter.symbols.VariableSymbol;
 
 import java.util.ArrayList;
 
-public class ToIntFunction extends InbuiltFunction {
-    public ToIntFunction() {
-        super("toint");
+public class ToLongFunction extends InbuiltFunction {
+    public ToLongFunction() {
+        super("tolong");
 
         this.addParameter(new VariableSymbol("a"));
         this.setCustomFunction(ToIntFunction::run);
@@ -23,6 +23,6 @@ public class ToIntFunction extends InbuiltFunction {
             return new ReturnValue(((Double) argumentValue).intValue());
         }
 
-        return new ReturnValue(Integer.parseInt(argumentValue.toString()));
+        return new ReturnValue(Long.parseLong(argumentValue.toString()));
     }
 }
